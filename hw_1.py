@@ -77,5 +77,3 @@ print(def_coding)
 with open('test.txt', encoding='utf-8', errors='replace') as f:
     for line in f:
         print(line)
-
-        
