@@ -4,14 +4,11 @@ import argparse
 import time
 
 import logging
-
 import log.client_log_config
-from log.decorators import log
 
 logger = logging.getLogger('client')
 
 
-@log
 def parser_init():
     try:
         parser = argparse.ArgumentParser(description='Client')
@@ -23,7 +20,6 @@ def parser_init():
         logger.error('parser init error', exc_info=True)
 
 
-@log
 def socket_init(addr, port):
     try:
         s = socket(AF_INET, SOCK_STREAM)
@@ -34,7 +30,6 @@ def socket_init(addr, port):
         logger.error('socket init error', exc_info=True)
 
 
-@log
 def main(new_socket):
     msg = {
         "action": "presence",
