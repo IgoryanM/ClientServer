@@ -4,14 +4,11 @@ import argparse
 import time
 
 import logging
-
 import log.server_log_config
-from log.decorators import log
 
 logger = logging.getLogger('server')
 
 
-@log
 def parser_init():
     try:
         parser = argparse.ArgumentParser(description='Server')
@@ -23,7 +20,6 @@ def parser_init():
         logger.error('parser init error', exc_info=True)
 
 
-@log
 def socket_init(addr, port):
     try:
         s = socket(AF_INET, SOCK_STREAM)
@@ -36,8 +32,7 @@ def socket_init(addr, port):
         logger.error('socket init error', exc_info=True)
 
 
-@log
-def mainq(new_socket, testing=False):
+def main(new_socket, testing=False):
     while True:
         if testing:
             new_socket.close()
@@ -63,4 +58,4 @@ def mainq(new_socket, testing=False):
 if __name__ == '__main__':
     args = parser_init()
     socket = socket_init(args.addr, args.port)
-    mainq(socket)
+    main(socket)
