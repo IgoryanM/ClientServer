@@ -1,6 +1,8 @@
 from socket import *
 import pickle
 import argparse
+import time
+
 import logging
 import log.client_log_config
 
@@ -28,36 +30,30 @@ def socket_init(addr, port):
         logger.error('socket init error', exc_info=True)
 
 
-def read_messages(socket):
-    data = socket.recv(1024).decode('utf-8')
-    print(data)
+def main(new_socket):
+    msg = {
+        "action": "presence",
+        "time": time.time(),
+        "type": "status",
+        "user": {
+            "account_name": "User_1",
+            "status": "Online"
+        }
+    }
 
-
-def write_messages(socket):
-    msg = input('Ваше сообщение: ')
-    if msg == 'exit':
-        return 'exit'
     try:
-        socket.send(msg.encode('utf-8'))
+        new_socket.send(pickle.dumps(msg))
         logger.info('message sent to the server')
     except:
         logger.error('message sent error', exc_info=True)
 
-
-def main(client_socket, ctype: str):
-    with client_socket as sock:
-        if ctype == 'r':
-            while True:
-                read_messages(sock)
-        elif ctype == 'w':
-            while True:
-                if write_messages(sock) == 'exit':
-                    break
-                write_messages(sock)
+    data = new_socket.recv(1024)
+    response = pickle.loads(data)['response']
+    new_socket.close()
+    return response
 
 
 if __name__ == '__main__':
     args = parser_init()
     socket = socket_init(args.addr, args.port)
-    client_type = input('Please, choose client type - only read (r) or only write (w): ')
-    main(socket, client_type)
+    main(socket)
