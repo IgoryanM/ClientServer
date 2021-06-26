@@ -37,7 +37,6 @@ def read_requests(r_clients, all_clients):
     for sock in r_clients:
         try:
             data = pickle.loads(sock.recv(1024))
-            print(data)
             requests[sock] = data
         except:
             print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
@@ -49,8 +48,12 @@ def write_responses(requests, w_clients, all_clients):
     for sock in w_clients:
         if sock in requests:
             try:
-                if requests[sock]['action'] != 'presence':
-                    resp = pickle.dumps(requests[sock])
+                if requests[sock]['action'] == 'msg':
+                    time = requests[sock]['time']
+                    name = requests[sock]['from']
+                    message = requests[sock]['message']
+                    resp = pickle.dumps(f'{time} - {name}: {message}')
+                    print(resp)
                     for client in w_clients:
                         if client != sock:
                             client.send(resp)

@@ -41,7 +41,10 @@ def read_messages(socket):
 
 def write_messages(socket):
     msg = jim.presence
+    msg['time'] = str(datetime.datetime.now().replace(microsecond=0))
     socket.send(pickle.dumps(msg))
+
+    name = input('Введите ваше имя: ')
 
     while True:
         command = input(
@@ -54,17 +57,17 @@ def write_messages(socket):
         try:
             if command == 'j':
                 msg = jim.join
-                msg['time'] = datetime.datetime.now().replace(microsecond=0)
+                msg['time'] = str(datetime.datetime.now().replace(microsecond=0))
                 socket.send(pickle.dumps(msg))
             elif command == 'lv':
                 msg = jim.leave
-                msg['time'] = datetime.datetime.now().replace(microsecond=0)
+                msg['time'] = str(datetime.datetime.now().replace(microsecond=0))
                 socket.send(pickle.dumps(msg))
             elif command == 'm':
                 msg = jim.msg
-                msg['time'] = datetime.datetime.now().replace(microsecond=0)
+                msg['time'] = str(datetime.datetime.now().replace(microsecond=0))
                 msg['to'] = 'user_2'
-                msg['from'] = 'user_1'
+                msg['from'] = name
                 msg['message'] = input('Введите ваше сообщение: ')
                 socket.send(pickle.dumps(msg))
 
