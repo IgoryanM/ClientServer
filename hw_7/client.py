@@ -54,7 +54,6 @@ def main(client_socket, ctype: str):
                     break
                 write_messages(sock)
 
-
 if __name__ == '__main__':
     args = parser_init()
     socket = socket_init(args.addr, args.port)
