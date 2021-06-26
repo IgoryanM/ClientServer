@@ -33,12 +33,10 @@ def socket_init(addr, port):
 
 
 def read_messages(socket):
-    msg = jim.presence
-    socket.send(pickle.dumps(msg))
-
     while True:
-        data = pickle.loads(socket.recv(1024))
-        print(data)
+        data = socket.recv(1024)
+        if data:
+            print(pickle.loads(data))
 
 
 def write_messages(socket):
@@ -47,7 +45,7 @@ def write_messages(socket):
 
     while True:
         command = input(
-            'Введите команду (j - вступить в чат, lv - выйти из чата, q - отключиться, m - отправить сообщение: ')
+            'Введите команду (j - вступить в чат, lv - выйти из чата, q - отключиться, m - отправить сообщение:\n')
 
         if command == 'q':
             msg = jim.quit_server
@@ -75,19 +73,16 @@ def write_messages(socket):
             logger.error('message sent error', exc_info=True)
 
 
-def main(client_socket, ctype: str):
-    if ctype == 'r':
-        r_thread = Thread(target=read_messages, args=(client_socket,))
-        # r_thread.daemon = True
-        r_thread.start()
-    elif ctype == 'w':
-        w_thread = Thread(target=write_messages, args=(client_socket,))
-        # w_thread.daemon = True
-        w_thread.start()
+def main(client_socket):
+    r_thread = Thread(target=read_messages, args=(client_socket,))
+    r_thread.daemon = True
+    r_thread.start()
+
+    w_thread = Thread(target=write_messages, args=(client_socket,))
+    w_thread.start()
 
 
 if __name__ == '__main__':
     args = parser_init()
     socket = socket_init(args.addr, args.port)
-    client_type = input('Please, choose client type - only read (r) or only write (w): ')
-    main(socket, client_type)
+    main(socket)
